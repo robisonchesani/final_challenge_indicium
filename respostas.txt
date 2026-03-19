@@ -1,0 +1,41 @@
+QUESTÃO 1 (tabela vendas_2023_2024):
+
+1.1 (tudo respondido):
+Quantidade total de linhas
+Quantidade total de colunas
+Intervalo de datas analisado (data mínima e máxima)
+Valor mínimo
+Valor máximo
+Valor médio
+
+1.2 (respondido):
+Qual é o valor máximo registrado na coluna "total"?
+R: 2222973.0
+
+1.3 : ### NÃO ESQUECER ###
+Possíveis outliers em "total",
+Qualidade dos dados (valores nulos ou inconsistentes),
+Você considera que o dataset está pronto para análises ou se exigiria tratamento prévio.
+
+QUESTÃO 2 (tabela produtos_raw):
+
+2.1 (tudo respondido):
+Fornecer código python para essas 3 tarefas:
+(V) Parte 1 — Padronize os nomes das categorias de produtos em: eletrônicos, propulsão e ancoragem.
+(V) Parte 2 — Converta os valores para o tipo numérico.
+(V) Parte 3 — Remova as duplicatas. 
+
+2.2 (respondido):
+Quantos produtos duplicados foram removidos?
+R: 7
+
+QUESTÃO 3 (arquivo custos_importacao.json):
+
+3.1 (respondido): 
+Fornecer código python:
+- Carregue o arquivo JSON e gere um novo arquivo CSV organizando-o 
+  de acordo com a definição na imagem abaixo.
+
+3.2 (respondido):
+Quantas entradas de importação o CSV recebeu ao todo após a normalização?
+R: 1260
