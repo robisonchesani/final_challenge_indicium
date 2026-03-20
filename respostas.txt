@@ -39,3 +39,52 @@ Fornecer código python:
 3.2 (respondido):
 Quantas entradas de importação o CSV recebeu ao todo após a normalização?
 R: 1260
+
+QUESTÃO 4 (PRECISA DE REVISÃO) NÃO ENTENDI A QUESTÃO DO PREJUÍZO
+
+(arquivos vendas_2023_2024.csv (pegar o tratado) e custos_importacao.csv (tratado))
+O sistema de vendas (vendas_2023_2024.csv) registra valores em real BRL
+O catálogo de fornecedores (custos_importacao.json) registra custos unitários em dollar USD
+O câmbio varia diariamente
+
+Até hoje, ninguém cruzou o custo em dólar do dia da venda com o valor de venda em reais.
+
+O custo em USD é unitário
+O custo em BRL deve ser calculado usando o câmbio da data da venda
+A taxa de câmbio deve ser considerada a média da cotação de venda do dia (Banco Central)
+A receita total do produto considera todas as vendas (inclusive as sem prejuízo)
+Ignore impostos e frete
+
+Parte 1 — Cálculo e modelagem
+Calcule o custo total em BRL por transação (respondido)
+Identifique transações com prejuízo
+Agregue os dados por id_produto, gerando:
+Receita total (BRL)
+Prejuízo total (BRL)
+Percentual de perda (prejuízo_total / receita_total)
+
+Parte 2 — Análise visual
+Gere um gráfico que represente o prejuízo total por produto, considerando apenas produtos que tiveram prejuízo. (Inserir o gráfico no relatório/dashboard final)
+
+Parte 3 —  Explique sobre o desenvolvimento :
+Qual data de câmbio você utilizou?
+R: Usei cotações adquiridas através de uma API do banco central.
+   As cotações de alguns dias não estavam na API, então preenchi com a mediana.
+Como definiu o prejuízo?
+Alguma suposição relevante?
+
+QUESTÃO 5 :
+
+(V) Faturamento Total: Soma da coluna total por cliente
+(V) Frequência: Contagem total de transações (IDs de venda) por cliente.
+(V) Ticket Médio: Faturamento Total / Frequência.
+(V) Diversidade de Categorias: Quantidade de categorias distintas que o cliente comprou.
+(V) Nota: É necessário limpar os nomes das categorias no arquivo produtos_raw.csv (ex: consolidar "Ancorajen", "Encoragem" e "Ancoragem" como uma única categoria).
+(V) Filtro de Elite: Apenas clientes que compraram produtos de 3 ou mais categorias distintas devem ser considerados no ranking.
+(V) Desempate: Em caso de empate no Ticket Médio, utilize o id_cliente em ordem crescente.
+
+Tarefa:
+(V) Realize a limpeza das categorias de produtos para evitar duplicidade por erro de grafia.
+(V) Calcule o Ticket Médio e a Diversidade de Categorias para cada id_cliente.
+(V) Filtre os 10 clientes com o maior Ticket Médio que atendam ao critério de diversidade (3+ categorias).
+Para este grupo específico de 10 clientes, identifique qual categoria de produto concentra a maior quantidade total de itens comprados (sum(qtd)).

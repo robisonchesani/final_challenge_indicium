@@ -44,6 +44,9 @@ outliers = vendas[(vendas['total'] < lim_inf) | (vendas['total'] > lim_sup)]
 
 print(outliers)
 #%%
+vendas.to_csv('vendas.csv', index=False, encoding="utf-8-sig")
+
+#%%
 #############
 # QUESTÃO 2 #
 #############
@@ -110,7 +113,8 @@ print(produtos.duplicated().sum())
 produtos = produtos.drop_duplicates()
 #%%
 produtos.shape
-
+#%%
+produtos.to_csv('produtos.csv', index=False, encoding="utf-8-sig")
 # %%
 ###############
 # QUESTÃO 3.1 #
@@ -150,14 +154,72 @@ df_custos.to_csv("custos_importacao.csv", index=False, encoding="utf-8-sig")
 print(len(df_custos))
 # %%
 #############
-# QUESTÃO 4 #
+# QUESTÃO 5 #
 #############
 #%% 
-# with open('datasets/clientes_crm.json', 'r', encoding='utf-8') as f:
-#     data = json.load(f)
+with open('datasets/clientes_crm.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
 
-# clientes = pd.json_normalize(data)
+clientes = pd.json_normalize(data)
 
-# clientes.head()
-# # %%
-# clientes.info()
+clientes.head()
+# %%
+clientes.info()
+# %%
+import re
+
+# Lista oficial de UFs para identificação segura
+UFS_VALIDAS = {
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+    'MT', 'MS', 'MG', 'PA', 'PB', 'PR','PE', 'PI', 'RJ', 'RN',
+    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+}
+
+def extrair_uf_cidade(texto):
+    if pd.isna(texto):
+        return pd.Series({"cidade": None, "uf": None})
+    
+    # Remove espaços extras e divide pelo separador (vírgula ou hífen)
+    texto = str(texto).strip()
+    partes = re.split(r"[,\-\/\|]", texto)
+    partes = [p.strip() for p in partes if p.strip()]
+    
+    uf = None
+    cidade = None
+    
+    for parte in partes:
+        # Verifica se a parte é uma UF válida (exatamente 2 letras maiúsculas)
+        if parte.upper() in UFS_VALIDAS:
+            uf = parte.upper()
+        else:
+            cidade = parte.strip()
+    
+    return pd.Series({"cidade": cidade, "uf": uf})
+
+# Aplicar no dataframe
+clientes[["cidade", "uf"]] = clientes["location"].apply(extrair_uf_cidade)
+
+# Checar resultados
+print(clientes[["location", "cidade", "uf"]].head(20))
+
+# Checar se sobrou algum NULL (não mapeado)
+nao_mapeados = clientes[clientes["uf"].isna() | clientes["cidade"].isna()]
+print(f"\nNão mapeados: {len(nao_mapeados)}")
+print(nao_mapeados["location"])
+# %%
+clientes.head()
+# %%
+clientes['email'] = clientes['email'].str.replace('#', '@')
+clientes.head()
+# %%
+clientes.rename(columns={'code': 'id'}, inplace=True)
+clientes.head()
+#%%
+clientes.drop(columns='location', inplace=True)
+# %%
+clientes = clientes[['id', 'full_name', 'email', 'cidade', 'uf']]
+# %%
+clientes.head()
+# %%
+clientes.to_csv('clientes.csv', index=False, encoding="utf-8-sig")
+# %%
