@@ -21,11 +21,17 @@ vendas.info()
 
 #%%
 vendas.shape
-
-vendas.duplicated().sum()
 #%%
-tem_negativo = (vendas['total'] < 0).any()
-print(tem_negativo)
+
+print(f"Total de valores duplicados: {vendas.duplicated().sum()}")
+#%%
+nulos = vendas[['total', 'qtd']].isnull().sum()
+
+nao_positivos = (vendas[['total', 'qtd']] <= 0).sum()
+
+print(f"Valores nulos em 'total' e 'qtd':\n",nulos)
+print(f"Valores nulos em 'total' e 'qtd':\n",nao_positivos)
+
 #%%
 import matplotlib.pyplot as plt
 
@@ -37,12 +43,43 @@ Q1 = vendas['total'].quantile(0.25)
 Q3 = vendas['total'].quantile(0.75)
 IQR = Q3 - Q1
 
-lim_sup = Q1 - 1.5 * IQR
-lim_inf = Q3 - 1.5 * IQR
+lim_inf = Q1 - 1.5 * IQR  # ← corrigido
+lim_sup = Q3 + 1.5 * IQR  # ← corrigido
 
 outliers = vendas[(vendas['total'] < lim_inf) | (vendas['total'] > lim_sup)]
 
+print(f"Total de outliers: {len(outliers)}")
 print(outliers)
+
+#%%
+print(f"% de outliers: {len(outliers)/len(vendas)*100:.1f}%")
+
+acima = outliers[outliers['total'] > lim_sup]
+abaixo = outliers[outliers['total'] < lim_inf]
+
+print(f"Outliers acima do limite superior: {len(acima)}")
+print(f"Outliers abaixo do limite inferior: {len(abaixo)}")
+#%%
+# Os 10 maiores valores
+print(outliers.nlargest(10, 'total')[['id', 'id_client', 'id_product', 'qtd', 'total', 'sale_date']])
+
+#%%
+# Ao invés de média, use mediana para métricas de vendas
+print(f"Média total:   R$ {vendas['total'].mean():.2f}")
+print(f"Mediana total: R$ {vendas['total'].median():.2f}")
+
+# A diferença entre os dois vai te dizer o quanto os outliers estão inflando a média
+
+#%%
+# Vamos visualizar isso de forma clara
+print(f"Média: R$ {vendas['total'].mean():,.2f}")
+print(f"Mediana: R$ {vendas['total'].median():,.2f}")
+print(f"Diferença: R$ {vendas['total'].mean() - vendas['total'].median():,.2f}")
+print(f"Média {vendas['total'].mean() / vendas['total'].median():.1f}x maior que a mediana")
+
+# Qual percentual das vendas está abaixo da média?
+abaixo_da_media = (vendas['total'] < vendas['total'].mean()).sum()
+print(f"% de vendas abaixo da média: {abaixo_da_media/len(vendas)*100:.1f}%")
 #%%
 vendas.to_csv('vendas.csv', index=False, encoding="utf-8-sig")
 
@@ -55,7 +92,6 @@ produtos.info()
 
 #%%
 produtos['price'] = produtos['price'].str.replace('R$ ', "", regex=False).astype(float)
-
 
 #%%
 produtos['actual_category'].unique()

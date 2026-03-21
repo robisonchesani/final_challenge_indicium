@@ -1,4 +1,4 @@
-QUESTÃO 1 (tabela vendas_2023_2024):
+QUESTÃO 1 (tabela vendas_2023_2024)(tudo respondido):
 
 1.1 (tudo respondido):
 Quantidade total de linhas
@@ -12,12 +12,27 @@ Valor médio
 Qual é o valor máximo registrado na coluna "total"?
 R: 2222973.0
 
-1.3 : ### NÃO ESQUECER ###
-Possíveis outliers em "total",
-Qualidade dos dados (valores nulos ou inconsistentes),
-Você considera que o dataset está pronto para análises ou se exigiria tratamento prévio.
+1.3 : (respondido)
+Possíveis outliers em "total"
+R: Existe um total de 1018 (10.3%) possíveis outliers, todos acima do limite superior.
+   Ao que parece, não são erros de digitação ou de entrada, são vendas
+   grandes, então eu as mantive no dataset.
+   A maioria das vendas apresenta valores abaixo da média (70.7%) e esta
+   média é 3.2x acima da mediana, eu recomendaria o uso da mediana
+   para análises e não da média, mas os exercícios seguintes pediram para
+   usar a média, então a média que foi usada.
 
-QUESTÃO 2 (tabela produtos_raw):
+Qualidade dos dados (valores nulos ou inconsistentes):
+R: Não foram encontrados dados nulos
+   Não foram encontrados dados inconsistentes (negativos e/ou
+   valores 0 na coluna 'total' e/ou na coluna 'qtd', por exemplo).
+   Também não foram encontrados dados duplicados.
+
+Você considera que o dataset está pronto para análises ou se exigiria tratamento prévio
+R: A coluna 'sale_date' está como tipo string, após alterá-la
+   para o tipo 'datetime' o dataset está pronto para análises 
+
+QUESTÃO 2 (tabela produtos_raw)(tudo respondido):
 
 2.1 (tudo respondido):
 Fornecer código python para essas 3 tarefas:
@@ -29,7 +44,7 @@ Fornecer código python para essas 3 tarefas:
 Quantos produtos duplicados foram removidos?
 R: 7
 
-QUESTÃO 3 (arquivo custos_importacao.json):
+QUESTÃO 3 (arquivo custos_importacao.json)(tudo respondido):
 
 3.1 (respondido): 
 Fornecer código python:
@@ -40,7 +55,7 @@ Fornecer código python:
 Quantas entradas de importação o CSV recebeu ao todo após a normalização?
 R: 1260
 
-QUESTÃO 4 (PRECISA DE REVISÃO) NÃO ENTENDI A QUESTÃO DO PREJUÍZO
+QUESTÃO 4 ***ARRUMAR QUERY's*** (tudo respondido)
 
 (arquivos vendas_2023_2024.csv (pegar o tratado) e custos_importacao.csv (tratado))
 O sistema de vendas (vendas_2023_2024.csv) registra valores em real BRL
@@ -55,25 +70,39 @@ A taxa de câmbio deve ser considerada a média da cotação de venda do dia (Ba
 A receita total do produto considera todas as vendas (inclusive as sem prejuízo)
 Ignore impostos e frete
 
-Parte 1 — Cálculo e modelagem
-Calcule o custo total em BRL por transação (respondido)
-Identifique transações com prejuízo
-Agregue os dados por id_produto, gerando:
-Receita total (BRL)
-Prejuízo total (BRL)
-Percentual de perda (prejuízo_total / receita_total)
+4.1 (tudo respondido):
+Fornecer código SQL
+(V) custo em R$ (custo_usd * taxa_cambio_data) - Se atentar ao cambio do dia
+(V) agregação por id_produto contendo:
+(V) receita total (soma do valor de venda em reais),
+(V) prejuízo total (soma apenas das perdas),
+(V) percentual de perda (prejuízo_total / receita_total).
 
-Parte 2 — Análise visual
-Gere um gráfico que represente o prejuízo total por produto, considerando apenas produtos que tiveram prejuízo. (Inserir o gráfico no relatório/dashboard final)
+4.2 (respondido):
+Qual é o id_produto que apresentou a maior porcentagem de perda 
+financeira relativa (maior % de prejuízo sobre sua receita) 
+no período analisado?
+R: 72
 
-Parte 3 —  Explique sobre o desenvolvimento :
+4.3 (respondido):
 Qual data de câmbio você utilizou?
 R: Usei cotações adquiridas através de uma API do banco central.
    As cotações de alguns dias não estavam na API, então preenchi com a mediana.
-Como definiu o prejuízo?
-Alguma suposição relevante?
 
-QUESTÃO 5 :
+Como definiu o prejuízo?
+R: Defini o resultado como a receita - (qtd x brl_price) e
+   toda transação que teve resultado < 0 foi considerado prejuízo.
+
+Alguma suposição relevante?
+R: Propulsão foi a categoria com maior prejuízo total (85.6%)
+   e Ancoragem foi a categoria com menor prejuízo total (1.9%).
+
+4.extra - Análise visual (respondido): 
+(V) Gere um gráfico que represente o prejuízo total por produto, considerando apenas 
+    produtos que tiveram prejuízo. (Inserir o gráfico no relatório/dashboard final)
+
+
+QUESTÃO 5 (tudo respondido):
 
 (V) Faturamento Total: Soma da coluna total por cliente
 (V) Frequência: Contagem total de transações (IDs de venda) por cliente.
@@ -87,4 +116,48 @@ Tarefa:
 (V) Realize a limpeza das categorias de produtos para evitar duplicidade por erro de grafia.
 (V) Calcule o Ticket Médio e a Diversidade de Categorias para cada id_cliente.
 (V) Filtre os 10 clientes com o maior Ticket Médio que atendam ao critério de diversidade (3+ categorias).
-Para este grupo específico de 10 clientes, identifique qual categoria de produto concentra a maior quantidade total de itens comprados (sum(qtd)).
+(V) Para este grupo específico de 10 clientes, identifique qual categoria de produto concentra a maior quantidade total de itens comprados (sum(qtd)).
+
+QUESTÃO 6 (tudo respondido):
+
+O Sr. Almir quer saber: "Qual é o dia da semana (Segunda, Terça...) que temos a pior média de vendas?" para decidir se vale a pena fechar a loja nesses dias.
+
+Um estagiário fez um GROUP BY dia_semana direto na tabela de vendas e disse que a Terça-feira era ótima, com média de R$5.000,00. 
+
+O problema: O estagiário esqueceu que em muitas terças-feiras a loja abriu mas vendeu zero. Como esses dias não existem na tabela de vendas (vendas_2023_2024.csv), eles foram ignorados no cálculo da média, inflando o resultado. Precisamos corrigir isso utilizando um calendário de datas (dimensão de datas)
+
+Premissas obrigatórias:
+O período de análise deve considerar todas as datas entre a menor e a maior data_venda presentes no arquivo.
+A loja esteve aberta em todos os dias do período (inclusive fins de semana).
+Dias sem registro na tabela de vendas devem ser considerados como valor_venda = 0.
+“Vendas diárias” correspondem à soma de valor_venda por dia.
+A média de vendas por dia da semana deve considerar todos os dias do calendário, inclusive os dias sem venda.
+O nome do dia da semana deve ser apresentado em português (Segunda-feira, Terça-feira, etc.).
+
+Tarefa:
+Construa uma dimensão de datas utilizando sql
+Cruze a dimensão de datas com a tabela de vendas para análise (não esqueça de considerar os dias sem vendas).
+
+6.1 (respondido): 
+Fornecer código SQL:
+(V) Desenvolvimento de um calendário com os dias da semana (em portugues)
+(V) LEFT JOIN entre o calendário e a tabela de vendas
+(V) agregação de vendas por dia (soma de valor_venda),
+(V) substituição de valores nulos por zero para dias sem vendas
+
+6.2 (respondido):
+Após considerar os dias zerados no cálculo: Qual é o Dia da Semana (ex: Domingo, Segunda...) 
+que apresenta a MENOR média de vendas histórica, 
+e qual é o valor dessa média arredondada para 2 casas decimais?
+R: Segunda-feria, com média de 3285975.58
+
+6.3 (tudo respondido):
+Por que é necessário utilizar uma tabela de datas (calendário) 
+em vez de agrupar diretamente a tabela de vendas?
+R: Porque a tabela de vendas só registra dias em que algo foi vendido. 
+   Dias sem venda simplesmente não existem nela então o SQL não considera
+   os dias em que a venda foi 0 para o cálculo da média.
+
+O que aconteceria com a média de vendas se um dia da semana 
+tivesse muitos dias sem nenhuma venda registrada?
+R: A média seria diretamente puxada para baixo

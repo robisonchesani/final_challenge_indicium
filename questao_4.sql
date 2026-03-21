@@ -1,43 +1,58 @@
-SELECT * FROM vendas_novo
-LIMIT 5;
-
-SELECT * FROM custos_convertidos
-WHERE start_date LIKE "2023%" OR start_date LIKE "2024"
-ORDER BY product_id, start_date
-LIMIT 5;
-
-WITH tb_vendas_lucro  AS (
-    SELECT id_product,
-           qtd,
-           SUM(total) AS receita_total
-    FROM vendas_novo
-    GROUP BY id_product
-),
-
-tb_custos AS (
-    SELECT product_id,
-           product_name,
-           SUM(brl_price) AS despesa_total
-    FROM custos_convertidos
-    GROUP BY product_id
-),
-
-tb_demonstrativo AS (
-    SELECT v.id_product,
-           c.product_name,
-           v.receita_total,
-           c.despesa_total,
-           v.receita_total - c.despesa_total AS lucro_liquido
-    FROM tb_vendas_lucro v
-    LEFT JOIN tb_custos c
+WITH tb_custo_vigente AS (
+    SELECT v.id AS id_venda,
+            v.id_product,
+            v.id_client,
+            v.qtd,
+            v.total AS receita,
+            v.sale_date,
+            c.brl_price AS custo_unitario,
+            ROUND(v.qtd * c.brl_price, 2) AS custo_total,
+            ROUND(v.total - (v.qtd * c.brl_price), 2) AS resultado
+    FROM vendas_novo v
+    LEFT JOIN custos_convertidos c
     ON v.id_product = c.product_id
+    AND DATE(c.start_date) = (
+        SELECT MAX(DATE(c2.start_date))
+        FROM custos_convertidos c2
+        WHERE c2.product_id = v.id_product
+        AND DATE(c2.start_date) <= DATE(v.sale_date)
+    )
+),
+
+tb_transacoes_prejuizo AS (
+    SELECT id_venda,
+            id_product,
+            id_client,
+            qtd,
+            receita,
+            custo_unitario,
+            custo_total,
+            resultado
+    FROM tb_custo_vigente
+    WHERE resultado < 0
+    ORDER BY resultado ASC
+),
+
+tb_perc_perda AS (
+    SELECT
+        id_product,
+        ROUND(SUM(receita), 2) AS receita_total,
+        ROUND(SUM(CASE WHEN resultado < 0 THEN ABS(resultado)
+                       ELSE 0 END), 2) AS prejuizo_total,
+        ROUND(SUM(CASE WHEN resultado < 0 THEN ABS(resultado)
+                       ELSE 0 END) / NULLIF(SUM(receita), 0) * 100, 2) AS percentual_perda
+    FROM tb_custo_vigente
+    GROUP BY id_product
+    ORDER BY percentual_perda DESC
 )
 
-SELECT * FROM tb_demonstrativo;
-
-
-
-
+SELECT p.actual_category,
+        SUM(pp.prejuizo_total) AS prejuizo_total
+FROM produtos_novo p
+LEFT JOIN tb_perc_perda pp
+ON pp.id_product = p.id
+GROUP BY p.actual_category
+ORDER BY prejuizo_total DESC;
 
 
 

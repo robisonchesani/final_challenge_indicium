@@ -1,9 +1,3 @@
-PRAGMA table_info(vendas_novo);
-
-PRAGMA table_info(clientes_crm);
-
-PRAGMA table_info(produtos_novo);
-
 WITH tb_faturamento AS (
     SELECT c.id,
             c.full_name,
@@ -59,21 +53,34 @@ tb_elite AS (
     HAVING c.n_categorias >= 3
     ORDER BY t.ticket_medio DESC
     LIMIT 10
+),
+
+tb_categoria_dominante AS (
+    SELECT p.actual_category,
+            SUM(v.qtd) AS total_itens
+    FROM vendas_novo v
+    LEFT JOIN produtos_novo p
+    ON v.id_product = p.id
+    WHERE v.id_client IN (SELECT id FROM tb_elite)
+    GROUP BY p.actual_category
+    ORDER BY total_itens DESC
+    LIMIT 1
 )
 
-SELECT * FROM tb_elite;
+SELECT * from tb_categoria_dominante;
 
 
 -- VALIDANDO QUERY DA CATEGORIA --
+-- query para conferir, cliente por cliente, se todos realmente compraram das 3 categorias
 SELECT
     c.full_name,
     p.actual_category,
     COUNT(*) AS compras_na_categoria
 FROM vendas_novo v
 LEFT JOIN clientes_crm c
-    ON c.id = v.id_client
+ON c.id = v.id_client
 LEFT JOIN produtos_novo p
-    ON v.id_product = p.id
-WHERE v.id_client = 31  -- troque pelo id de um cliente específico
+ON v.id_product = p.id
+WHERE v.id_client = 31  -- trocar pelo id de um cliente específico
 GROUP BY c.full_name, p.actual_category;
 
