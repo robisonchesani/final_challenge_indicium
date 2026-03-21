@@ -44,3 +44,6 @@ tb_vendas_dia_semana AS (
 )
 
 SELECT * FROM tb_vendas_dia_semana;
+
+SELECT id, name FROM produtos_novo
+WHERE name = 'GPS Garmin Vortex Maré Drift';

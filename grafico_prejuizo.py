@@ -14,16 +14,16 @@ import matplotlib.pyplot as plt
 query = """
 WITH tb_custo_vigente AS (
     SELECT
-        v.id                                            AS id_venda,
+        v.id AS id_venda,
         v.id_product,
         v.id_client,
         v.qtd,
-        v.total                                         AS receita,
+        v.total AS receita,
         v.sale_date,
         c.product_name,
-        c.brl_price                                     AS custo_unitario,
-        ROUND(v.qtd * c.brl_price, 2)                   AS custo_total,
-        ROUND(v.total - (v.qtd * c.brl_price), 2)       AS resultado
+        c.brl_price AS custo_unitario,
+        ROUND(v.qtd * c.brl_price, 2) AS custo_total,
+        ROUND(v.total - (v.qtd * c.brl_price), 2) AS resultado
     FROM vendas_novo v
     LEFT JOIN custos_convertidos c
         ON v.id_product = c.product_id
@@ -71,11 +71,11 @@ for bar, valor in zip(bars, df_prejuizo["prejuizo_total"]):
         fontsize=9
     )
 
-ax.set_title("Prejuízo Total por Produto", fontsize=14, fontweight="bold", pad=15)
+ax.set_title("Prejuízo Total por Produto (10 maiores)", fontsize=14, fontweight="bold", pad=15)
 ax.set_xlabel("Prejuízo Total (BRL em milhares)")
 ax.set_ylabel("")
 ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"R$ {x/1000000:,.0f}M"))
-ax.invert_yaxis()  # Maior prejuízo no topo
+ax.invert_yaxis()
 plt.tight_layout()
 plt.show()
 # %%
