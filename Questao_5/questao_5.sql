@@ -3,7 +3,7 @@ WITH tb_faturamento AS (
             c.full_name,
             SUM(v.total) AS faturamento_total
     FROM clientes_crm c
-    LEFT JOIN vendas_novo v
+    LEFT JOIN vendas v
     ON c.id = v.id_client
     GROUP BY c.id
     ORDER BY faturamento_total DESC
@@ -14,7 +14,7 @@ tb_transacoes AS (
             c.full_name,
             COUNT(v.id) AS transacoes
     FROM clientes_crm c
-    LEFT JOIN vendas_novo v
+    LEFT JOIN vendas v
     ON c.id = v.id_client
     GROUP BY c.id
     ORDER BY transacoes DESC
@@ -36,8 +36,8 @@ tb_categoria AS (
             c.full_name,
             COUNT(DISTINCT(p.actual_category)) AS n_categorias
     FROM clientes_crm c
-    LEFT JOIN vendas_novo v ON c.id = v.id_client
-    LEFT JOIN produtos_novo p ON v.id_product = p.id
+    LEFT JOIN vendas v ON c.id = v.id_client
+    LEFT JOIN produtos p ON v.id_product = p.id
     GROUP BY c.id
     ORDER BY n_categorias DESC
 ),
@@ -58,8 +58,8 @@ tb_elite AS (
 tb_categoria_dominante AS (
     SELECT p.actual_category,
             SUM(v.qtd) AS total_itens
-    FROM vendas_novo v
-    LEFT JOIN produtos_novo p
+    FROM vendas v
+    LEFT JOIN produtos p
     ON v.id_product = p.id
     WHERE v.id_client IN (SELECT id FROM tb_elite)
     GROUP BY p.actual_category
@@ -76,10 +76,10 @@ SELECT
     c.full_name,
     p.actual_category,
     COUNT(*) AS compras_na_categoria
-FROM vendas_novo v
+FROM vendas v
 LEFT JOIN clientes_crm c
 ON c.id = v.id_client
-LEFT JOIN produtos_novo p
+LEFT JOIN produtos p
 ON v.id_product = p.id
 WHERE v.id_client = 31  -- trocar pelo id de um cliente específico
 GROUP BY c.full_name, p.actual_category;

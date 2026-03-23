@@ -1,36 +1,11 @@
-# import pandas as pd
-# import sqlite3
-
-# # 1. Criar dados de exemplo (DataFrame Pandas)
-# data = {
-#     'Nome': ['Ana', 'Bruno', 'Carla'],
-#     'Idade': [25, 30, 22],
-#     'Cidade': ['São Paulo', 'Rio de Janeiro', 'Florianópolis']
-# }
-# df = pd.DataFrame(data)
-
-# # 2. Estabelecer conexão com o banco SQLite (o arquivo será criado se não existir)
-# conn = sqlite3.connect('exemplo.db')
-
-# # 3. Popular a tabela SQLite com os dados do DataFrame
-# # if_exists: 'replace' (cria/substitui), 'append' (adiciona), 'fail' (erro se existir)
-# # index=False: evita que o índice do pandas seja salvo como coluna
-# df.to_sql('usuarios', conn, if_exists='append', index=False)
-
-# # 4. Verificar e fechar a conexão
-# print("Tabela populada com sucesso!")
-# conn.close()
-
 
 # %%
-
 import pandas as pd
-
 import sqlite3
 #%% 
 ### POPULANDO TABELA DE VENDAS ###
 
-df_vendas = pd.read_csv('vendas.csv')
+df_vendas = pd.read_csv('Questao_1/vendas.csv')
 
 con = sqlite3.connect('vendas_23_24.db')
 
@@ -50,7 +25,7 @@ print(f"{cursor.rowcount} linhas inseridas com sucesso!")
 # %%
 
 ### POPULANDO TABELA DE CUSTOS DE IMPORTAÇÃO ###
-df_custos = pd.read_csv('custos_importacao.csv')
+df_custos = pd.read_csv('Questao_3/custos_importacao.csv')
 
 con = sqlite3.connect('vendas_23_24.db')
 
@@ -71,7 +46,7 @@ print(f"{cursor.rowcount} linhas inseridas com sucesso!")
 # %%
 ### POPULANDO TABELA DE CLIENTES ###
 
-df_clientes = pd.read_csv('clientes.csv')
+df_clientes = pd.read_csv('Questao_5/clientes.csv')
 
 con = sqlite3.connect('vendas_23_24.db')
 
@@ -91,10 +66,10 @@ print(f"{cursor.rowcount} linhas inseridas com sucesso!")
 # %%
 ### POPULANDO TABELA DE PRODUTOS ###
 
-df_produtos = pd.read_csv('produtos.csv')
-
+df_produtos = pd.read_csv('Questao_2/produtos.csv')
+# Alterar nome da coluna 'code' para 'id'
 df_produtos.rename(columns={'code': 'id'}, inplace=True)
-
+# Alterar ordem das colunas para ficar na ordem que estão na tabela do db
 df_produtos = df_produtos[['id', 'name', 'price', 'actual_category']]
 
 con = sqlite3.connect('vendas_23_24.db')

@@ -1,16 +1,16 @@
 WITH RECURSIVE dim_datas AS (
-    SELECT DATE((SELECT MIN(sale_date) FROM vendas_novo)) AS data
+    SELECT DATE((SELECT MIN(sale_date) FROM vendas)) AS data
     UNION ALL
     SELECT DATE(data, '+1 day')
     FROM dim_datas
-    WHERE data < DATE((SELECT MAX(sale_date) FROM vendas_novo))
+    WHERE data < DATE((SELECT MAX(sale_date) FROM vendas))
 ),
 
 tb_vendas_diarias AS (
     SELECT
-        DATE(sale_date)     AS data,
-        SUM(total)          AS total_dia
-    FROM vendas_novo
+        DATE(sale_date) AS data,
+        SUM(total) AS total_dia
+    FROM vendas
     GROUP BY DATE(sale_date)
 ),
 
@@ -44,6 +44,3 @@ tb_vendas_dia_semana AS (
 )
 
 SELECT * FROM tb_vendas_dia_semana;
-
-SELECT id, name FROM produtos_novo
-WHERE name = 'GPS Garmin Vortex Maré Drift';

@@ -1,12 +1,11 @@
 #%%
 import pandas as pd
-import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 # %%
 # CARREGAMENTO E TRATAMENTO PRÉVIO
 
-vendas = pd.read_csv('vendas.csv')
-produtos = pd.read_csv('produtos.csv')
+vendas = pd.read_csv('Questao_1/vendas.csv')
+produtos = pd.read_csv('Questao_2/produtos.csv')
 # %%
 produtos.head()
 # %%
@@ -71,14 +70,8 @@ nome_ref = produtos.loc[produtos['id'] == produto_id, 'name'].values[0]
 # %%
 # RESULTADO FINAL
 
-print(f"\n{'='*55}")
-print(f"Produto de referência: [{produto_id}] {nome_ref}")
-print(f"{'='*55}")
-print(f"{'#':<4} {'Produto':<35} {'Categoria':<15} {'Similaridade'}")
-print(f"{'-'*55}")
+print(f"Produto-alvo: [{produto_id}] {nome_ref}")
 
-for i, row in ranking.iterrows():
-    print(f"{i+1:<4} {row['name']:<35} {row['actual_category']:<15} {row['similaridade']:.4f}")
-
-print(f"{'='*55}")
+ranking = ranking[['id', 'name', 'actual_category', 'similaridade']]
+ranking
 # %%

@@ -24,7 +24,7 @@ WITH tb_custo_vigente AS (
         c.brl_price AS custo_unitario,
         ROUND(v.qtd * c.brl_price, 2) AS custo_total,
         ROUND(v.total - (v.qtd * c.brl_price), 2) AS resultado
-    FROM vendas_novo v
+    FROM vendas v
     LEFT JOIN custos_convertidos c
         ON v.id_product = c.product_id
         AND DATE(c.start_date) = (

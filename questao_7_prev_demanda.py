@@ -4,7 +4,7 @@ from sklearn.metrics import mean_absolute_error
 # %%
 # GERAR DATAFRAME
 
-df_geral = pd.read_csv('vendas.csv')
+df_geral = pd.read_csv('Questao_1/vendas.csv')
 
 # filtrando somente o produto 'Motor de Popa Yamaha Evo Dash 155HP' (product_id = 54)
 

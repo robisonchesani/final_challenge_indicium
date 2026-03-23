@@ -1,8 +1,13 @@
+"""
+Função para buscar cotação do dólar nas datas das importações e
+realizar a conversão para Real.
+"""
+
 #%%
 import requests
 import pandas as pd
 import sqlite3
-
+#%%
 def buscar_dolar(data_inicio, data_fim):
     url = (
         f"https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/"

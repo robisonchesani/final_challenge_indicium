@@ -1,3 +1,24 @@
+-- CREATE VIEW custos_convertidos AS
+
+-- WITH mediana AS (
+--     SELECT AVG(cotacao_venda) AS valor_mediana
+--     FROM (
+--         SELECT cotacao_venda
+--         FROM cotacao_dolar
+--         ORDER BY cotacao_venda
+--         LIMIT 2 - (SELECT COUNT(*) FROM cotacao_dolar) % 2
+--         OFFSET (SELECT (COUNT(*) - 1) / 2 FROM cotacao_dolar)
+--     )
+-- )
+
+-- SELECT i.*,
+--        COALESCE(c.cotacao_venda, m.valor_mediana) AS cotacao_venda,
+--        ROUND(i.usd_price * COALESCE(c.cotacao_venda, m.valor_mediana) , 2) AS brl_price
+-- FROM custos_importacao i
+-- LEFT JOIN cotacao_dolar c ON i.start_date = c.data
+-- CROSS JOIN mediana m
+-- ORDER BY i.product_id, i.start_date;
+
 WITH tb_custo_vigente AS (
     SELECT v.id AS id_venda,
             v.id_product,
@@ -8,7 +29,7 @@ WITH tb_custo_vigente AS (
             c.brl_price AS custo_unitario,
             ROUND(v.qtd * c.brl_price, 2) AS custo_total,
             ROUND(v.total - (v.qtd * c.brl_price), 2) AS resultado
-    FROM vendas_novo v
+    FROM vendas v
     LEFT JOIN custos_convertidos c
     ON v.id_product = c.product_id
     AND DATE(c.start_date) = (
@@ -44,36 +65,16 @@ tb_perc_perda AS (
     FROM tb_custo_vigente
     GROUP BY id_product
     ORDER BY percentual_perda DESC
+),
+
+tb_prejuizo_total AS (
+    SELECT p.actual_category,
+            SUM(pp.prejuizo_total) AS prejuizo_total
+    FROM produtos p
+    LEFT JOIN tb_perc_perda pp
+    ON pp.id_product = p.id
+    GROUP BY p.actual_category
+    ORDER BY prejuizo_total DESC
 )
 
-SELECT p.actual_category,
-        SUM(pp.prejuizo_total) AS prejuizo_total
-FROM produtos_novo p
-LEFT JOIN tb_perc_perda pp
-ON pp.id_product = p.id
-GROUP BY p.actual_category
-ORDER BY prejuizo_total DESC;
-
-
-
--- CREATE VIEW custos_convertidos AS
-
--- WITH mediana AS (
---     SELECT AVG(cotacao_venda) AS valor_mediana
---     FROM (
---         SELECT cotacao_venda
---         FROM cotacao_dolar
---         ORDER BY cotacao_venda
---         LIMIT 2 - (SELECT COUNT(*) FROM cotacao_dolar) % 2
---         OFFSET (SELECT (COUNT(*) - 1) / 2 FROM cotacao_dolar)
---     )
--- )
-
--- SELECT i.*,
---        COALESCE(c.cotacao_venda, m.valor_mediana) AS cotacao_venda,
---        ROUND(i.usd_price * COALESCE(c.cotacao_venda, m.valor_mediana) , 2) AS brl_price
--- FROM custos_importacao i
--- LEFT JOIN cotacao_dolar c ON i.start_date = c.data
--- CROSS JOIN mediana m
--- ORDER BY i.product_id, i.start_date;
-
+SELECT * FROM tb_prejuizo_total;
