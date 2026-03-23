@@ -69,3 +69,4 @@ clientes = clientes[['id', 'full_name', 'email', 'cidade', 'uf']]
 clientes.head()
 # %%
 clientes.to_csv('clientes.csv', index=False, encoding="utf-8-sig")
+# %%

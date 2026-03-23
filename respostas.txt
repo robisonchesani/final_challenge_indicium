@@ -1,8 +1,8 @@
 QUESTÃO 1 (tabela vendas_2023_2024)(tudo respondido):
 
 1.1 (tudo respondido):
-Quantidade total de linhas
-Quantidade total de colunas
+Quantidade total de linhas 9895
+Quantidade total de colunas 6
 Intervalo de datas analisado (data mínima e máxima)
 Valor mínimo
 Valor máximo

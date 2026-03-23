@@ -1,0 +1,7 @@
+pandas
+matplotlib
+scikit-learn
+sqlalchemy
+requests
+python-dateutil
+scikit-learn

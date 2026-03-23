@@ -75,3 +75,4 @@ abaixo_da_media = (vendas['total'] < vendas['total'].mean()).sum()
 print(f"% de vendas abaixo da média: {abaixo_da_media/len(vendas)*100:.1f}%")
 #%%
 vendas.to_csv('vendas.csv', index=False, encoding="utf-8-sig")
+# %%

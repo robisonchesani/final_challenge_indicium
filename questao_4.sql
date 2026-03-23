@@ -1,23 +1,23 @@
--- CREATE VIEW custos_convertidos AS
+CREATE VIEW custos_convertidos AS
 
--- WITH mediana AS (
---     SELECT AVG(cotacao_venda) AS valor_mediana
---     FROM (
---         SELECT cotacao_venda
---         FROM cotacao_dolar
---         ORDER BY cotacao_venda
---         LIMIT 2 - (SELECT COUNT(*) FROM cotacao_dolar) % 2
---         OFFSET (SELECT (COUNT(*) - 1) / 2 FROM cotacao_dolar)
---     )
--- )
+WITH mediana AS (
+    SELECT AVG(cotacao_venda) AS valor_mediana
+    FROM (
+        SELECT cotacao_venda
+        FROM cotacao_dolar
+        ORDER BY cotacao_venda
+        LIMIT 2 - (SELECT COUNT(*) FROM cotacao_dolar) % 2
+        OFFSET (SELECT (COUNT(*) - 1) / 2 FROM cotacao_dolar)
+    )
+)
 
--- SELECT i.*,
---        COALESCE(c.cotacao_venda, m.valor_mediana) AS cotacao_venda,
---        ROUND(i.usd_price * COALESCE(c.cotacao_venda, m.valor_mediana) , 2) AS brl_price
--- FROM custos_importacao i
--- LEFT JOIN cotacao_dolar c ON i.start_date = c.data
--- CROSS JOIN mediana m
--- ORDER BY i.product_id, i.start_date;
+SELECT i.*,
+       COALESCE(c.cotacao_venda, m.valor_mediana) AS cotacao_venda,
+       ROUND(i.usd_price * COALESCE(c.cotacao_venda, m.valor_mediana) , 2) AS brl_price
+FROM custos_importacao i
+LEFT JOIN cotacao_dolar c ON i.start_date = c.data
+CROSS JOIN mediana m
+ORDER BY i.product_id, i.start_date;
 
 WITH tb_custo_vigente AS (
     SELECT v.id AS id_venda,
@@ -77,4 +77,4 @@ tb_prejuizo_total AS (
     ORDER BY prejuizo_total DESC
 )
 
-SELECT * FROM tb_prejuizo_total;
+SELECT * FROM tb_perc_perda;

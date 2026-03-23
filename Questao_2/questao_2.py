@@ -69,3 +69,4 @@ produtos = produtos.drop_duplicates()
 produtos.shape
 #%%
 produtos.to_csv('produtos.csv', index=False, encoding="utf-8-sig")
+# %%
